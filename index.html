@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AntiFake ID - Scan. Verify. Trust.</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white">
+  <div class="max-w-5xl mx-auto p-6"><!-- Hero -->
+<div class="text-center mb-12">
+  <h1 class="text-4xl font-bold mb-4">AntiFake ID</h1>
+  <p class="text-gray-400 text-lg">Scan. Verify. Trust.</p>
+  <p class="text-gray-500 mt-2">Cek keaslian barang dalam hitungan detik</p>
+</div>
+
+<!-- Checker -->
+<div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+  <h2 class="text-xl font-semibold mb-4">Cek Barang</h2>
+  <input id="code" class="w-full mb-3 p-3 rounded-lg bg-gray-800 border border-gray-700" placeholder="Masukkan kode / serial number" />
+  <input type="file" class="w-full mb-3 p-3 rounded-lg bg-gray-800 border border-gray-700" />
+  <button onclick="handleCheck()" class="w-full bg-white text-black py-3 rounded-lg font-semibold">Verify Now</button>
+
+  <div id="result" class="mt-4 hidden p-4 rounded-xl bg-gray-800"></div>
+</div>
+
+<!-- Features -->
+<div class="grid md:grid-cols-3 gap-6 mt-12">
+  <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+    <h3 class="text-lg font-semibold">Scan Cepat</h3>
+    <p class="text-gray-400 text-sm mt-2">Cek barang hanya dalam beberapa detik.</p>
+  </div>
+  <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+    <h3 class="text-lg font-semibold">AI Verification</h3>
+    <p class="text-gray-400 text-sm mt-2">Analisa cerdas berbasis data.</p>
+  </div>
+  <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+    <h3 class="text-lg font-semibold">Authenticity Report</h3>
+    <p class="text-gray-400 text-sm mt-2">Hasil lengkap + confidence score.</p>
+  </div>
+</div>
+
+<!-- Pricing -->
+<div class="mt-16 text-center">
+  <h2 class="text-2xl font-bold mb-6">Pricing</h2>
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+      <h3 class="text-lg font-semibold">Free</h3>
+      <p class="text-gray-400">3x cek per hari</p>
+    </div>
+    <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl">
+      <h3 class="text-lg font-semibold">Premium</h3>
+      <p class="text-gray-400">Unlimited + akurasi tinggi</p>
+    </div>
+  </div>
+</div>
+
+  </div>  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCJ_t3E56sNN6l6tgiNTLe877jUE-wovfM",
+    authDomain: "antifake-id.firebaseapp.com",
+    projectId: "antifake",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.handleCheck = async function () {
+    const code = document.getElementById("code").value;
+    const resultDiv = document.getElementById("result");
+
+    const q = query(collection(db, "products"), where("code", "==", code));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const data = querySnapshot.docs[0].data();
+
+      resultDiv.classList.remove("hidden");
+      resultDiv.innerHTML = `
+        <p class="text-lg">Status: <span style="color:#22c55e">${data.status}</span></p>
+        <p class="text-sm text-gray-400">${data.name}</p>
+      `;
+    } else {
+      resultDiv.classList.remove("hidden");
+      resultDiv.innerHTML = `
+        <p class="text-lg">Status: <span style="color:#ef4444">Palsu</span></p>
+        <p class="text-sm text-gray-400">Produk tidak ditemukan</p>
+      `;
+    }
+  };
+</script>
+  </script></body>
+</html>
